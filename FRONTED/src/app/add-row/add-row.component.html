@@ -1,0 +1,29 @@
+<div class="container mt-4">
+    <div class="row">
+      <div class="col-12">
+        <h2>Registro de Datos</h2>
+      </div>
+    </div>
+    
+    <form (ngSubmit)="onSubmit()" class="form">
+      <div class="form-group">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" class="form-control" required [(ngModel)]="newRow.Name">
+      </div>
+  
+      <div class="form-group">
+        <label for="gmail">Gmail:</label>
+        <input type="email" id="gmail" name="gmail" class="form-control" required [(ngModel)]="newRow.Gmail">
+      </div>
+  
+      <div class="form-group">
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" class="form-control" required [(ngModel)]="newRow.Password">
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Registrarse</button>
+    </form>
+  </div>
+  
+  
+

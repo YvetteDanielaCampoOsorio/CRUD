@@ -4,9 +4,13 @@ import express from 'express';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 import 'dotenv/config';
-import cors from "cors";
+import cors from 'cors';
 
 const app = express();
+app.use(express.json());
+
+app.use(cors());
+
 const port = 3000;
 const googleId = '1iJD1HoFG4bvuOfLI7LEZA-OioKn5Nw9d34o3A77wGKQ'
 
@@ -69,7 +73,8 @@ app.delete('/delete-row/:index', async (req, res) => {
     const rowToDelete = rows[index - 1];
 
     await rowToDelete.delete();
-    res.status(200).send('Fila eliminada correctamente');
+    res.status(200).json({ message: 'Fila eliminada correctamente' });
+
 
   } catch (error) {
     console.error('Error:', error);
@@ -77,11 +82,11 @@ app.delete('/delete-row/:index', async (req, res) => {
   }
 });
 
-// Ruta para obtener una fila
-app.get('/get-row/:rowIndex', async (req, res) => {
+// Ruta para obtener 1 fila
+app.get('/get-row/:index', async (req, res) => {
   try {
-    const rowIndex = parseInt(req.params.rowIndex);
-    if (isNaN(rowIndex) || rowIndex < 1) {
+    const index = parseInt(req.params.index);
+    if (isNaN(index) || index < 1) {
       return res.status(400).send('Índice de fila inválido');
     }
 
@@ -89,7 +94,7 @@ app.get('/get-row/:rowIndex', async (req, res) => {
     await doc.loadInfo();
 
     const sheet = doc.sheetsByIndex[0];
-    const rows = await sheet.getRows({ offset: rowIndex - 1, limit: 1 });
+    const rows = await sheet.getRows({ offset: index - 1, limit: 1 });
 
     if (rows.length === 0) {
       return res.status(404).send('Fila no encontrada');
@@ -105,7 +110,7 @@ app.get('/get-row/:rowIndex', async (req, res) => {
 });
 
 // Ruta para obtener todas las filas
-app.get('/get-row', async (req, res) => {
+app.get('/get-rows', async (req, res) => {
   try {
     const doc = new GoogleSpreadsheet('1iJD1HoFG4bvuOfLI7LEZA-OioKn5Nw9d34o3A77wGKQ', serviceAccountAuth);
     await doc.loadInfo();
@@ -125,16 +130,16 @@ app.get('/get-row', async (req, res) => {
 });
 
 // Ruta para actualizar las fila
-app.put('/update-row/:rowNumber', async (req, res) => {
+app.put('/update-row/:index', async (req, res) => {
   try {
-    const rowNumber = parseInt(req.params.rowNumber);
+    const index = parseInt(req.params.index);
     const updatedData = req.body;
 
     const doc = new GoogleSpreadsheet('1iJD1HoFG4bvuOfLI7LEZA-OioKn5Nw9d34o3A77wGKQ', serviceAccountAuth);
     await doc.loadInfo();
 
     const sheet = doc.sheetsByIndex[0];
-    const rows = await sheet.getRows({ offset: rowNumber - 1, limit: 1 });
+    const rows = await sheet.getRows({ offset: index - 1, limit: 1 });
 
     if (rows.length === 0) {
       return res.status(404).send('Fila no encontrada');
